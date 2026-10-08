@@ -8,6 +8,7 @@
     <string name="camera_capture_failed">拍摄失败，请重试</string>
 
     <!-- Common actions -->
+    <string name="action_back">返回</string>
     <string name="action_open_diary">观察日记</string>
     <string name="action_save">保存观察</string>
     <string name="action_discard">放弃</string>
