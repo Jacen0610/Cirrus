@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import si.jacen.cirrus.R
 import si.jacen.cirrus.domain.model.Observation
+import si.jacen.cirrus.ui.common.LocalPhotoFileStore
 import si.jacen.cirrus.ui.common.asCloudGenus
 import si.jacen.cirrus.ui.common.labelRes
 import si.jacen.cirrus.ui.common.toDateTimeText
@@ -40,12 +41,15 @@ fun DiaryScreen(
     viewModel: DiaryViewModel = hiltViewModel(),
 ) {
     val observations by viewModel.observations.collectAsStateWithLifecycle()
+    val photoFileStore = LocalPhotoFileStore.current
 
     DiaryScaffold(
         observations = observations,
         onBack = onBack,
         onOpenObservation = onOpenObservation,
-        photoFileOf = viewModel::photoFileOf,
+        photoFileOf = { observation ->
+            observation.photoFileName?.let(photoFileStore::file)
+        },
     )
 }
 

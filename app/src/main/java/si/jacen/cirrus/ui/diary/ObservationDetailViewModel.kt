@@ -8,10 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import si.jacen.cirrus.data.local.PhotoFileStore
 import si.jacen.cirrus.domain.model.Observation
 import si.jacen.cirrus.domain.repository.ObservationRepository
-import java.io.File
 import javax.inject.Inject
 
 sealed interface DetailUiState {
@@ -24,7 +22,6 @@ sealed interface DetailUiState {
 class ObservationDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: ObservationRepository,
-    private val photoFileStore: PhotoFileStore,
 ) : ViewModel() {
 
     private val observationId: Long =
@@ -38,9 +35,6 @@ class ObservationDetailViewModel @Inject constructor(
             _uiState.value = DetailUiState.Ready(repository.findObservation(observationId))
         }
     }
-
-    fun photoFileOf(observation: Observation): File? =
-        observation.photoFileName?.let(photoFileStore::file)
 
     fun delete() {
         viewModelScope.launch {

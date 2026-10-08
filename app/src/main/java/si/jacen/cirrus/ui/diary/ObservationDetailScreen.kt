@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import si.jacen.cirrus.R
+import si.jacen.cirrus.ui.common.LocalPhotoFileStore
 import si.jacen.cirrus.ui.common.asCloudGenus
 import si.jacen.cirrus.ui.common.labelRes
 import si.jacen.cirrus.ui.common.toDateTimeText
@@ -47,6 +48,7 @@ fun ObservationDetailScreen(
     viewModel: ObservationDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val photoFileStore = LocalPhotoFileStore.current
 
     LaunchedEffect(uiState) {
         if (uiState is DetailUiState.Deleted) onBack()
@@ -54,7 +56,9 @@ fun ObservationDetailScreen(
 
     ObservationDetailScaffold(
         uiState = uiState,
-        photoFileOf = viewModel::photoFileOf,
+        photoFileOf = { observation ->
+            observation.photoFileName?.let(photoFileStore::file)
+        },
         onDelete = viewModel::delete,
         onBack = onBack,
     )
