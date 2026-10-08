@@ -38,6 +38,14 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        // AGP 内置 Kotlin 2.2 无法读取 Kotlin 2.4 元数据；Coil 等新库把 stdlib
+        // 抬到了 2.4.x，这里对齐回编译器版本。内置 Kotlin 升到 2.4 后可移除。
+        force("org.jetbrains.kotlin:kotlin-stdlib:2.2.10")
+    }
+}
+
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
@@ -61,4 +69,11 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

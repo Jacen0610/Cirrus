@@ -1,3 +1,47 @@
 <resources>
     <string name="app_name">Cirrus</string>
+
+    <!-- Camera -->
+    <string name="camera_permission_rationale">拍云需要相机权限，请在弹窗中允许</string>
+    <string name="action_retry_permission">重新授权</string>
+    <string name="action_capture">拍摄</string>
+    <string name="camera_capture_failed">拍摄失败，请重试</string>
+
+    <!-- Common actions -->
+    <string name="action_open_diary">观察日记</string>
+    <string name="action_save">保存观察</string>
+    <string name="action_discard">放弃</string>
+    <string name="action_delete">删除记录</string>
+    <string name="dialog_cancel">取消</string>
+
+    <!-- Result -->
+    <string name="title_result">识别结果</string>
+    <string name="result_hint">模型给出前三个候选，点选你认为正确的云属</string>
+    <string name="result_no_candidates">这张照片无法识别，请重新拍摄</string>
+    <string name="confidence_percent">%1$d%%</string>
+
+    <!-- Diary -->
+    <string name="title_diary">观察日记</string>
+    <string name="empty_diary_title">还没有观察记录</string>
+    <string name="empty_diary_subtitle">回到相机，拍下第一朵云吧</string>
+    <string name="label_corrected_with_arg">已修正为 %1$s</string>
+
+    <!-- Detail -->
+    <string name="title_observation_detail">观察详情</string>
+    <string name="label_model_result">模型判定</string>
+    <string name="label_corrected">修正结果</string>
+    <string name="label_time">观察时间</string>
+    <string name="dialog_delete_title">删除这条观察？</string>
+    <string name="dialog_delete_message">照片与记录将一并删除，无法恢复。</string>
+    <string name="dialog_delete_confirm">删除</string>
+    <string name="detail_missing">这条记录已不存在</string>
+
+    <!-- Cloud genera -->
+    <string name="genus_cumulus">积云</string>
+    <string name="genus_altocumulus">高积云</string>
+    <string name="genus_cirrus">卷云</string>
+    <string name="genus_cirrostratus">卷层云</string>
+    <string name="genus_stratocumulus">层积云</string>
+    <string name="genus_stratus">层云</string>
+    <string name="genus_cumulonimbus">积雨云</string>
 </resources>
