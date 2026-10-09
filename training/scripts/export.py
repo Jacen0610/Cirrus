@@ -131,7 +131,7 @@ def export_int8(model, meta, out_path: Path, data_dir, calib_samples):
         )
     )
 
-    prepared = quantize_pt2e.prepare_pt2e(model.eval(), quantizer)
+    prepared = prepare_pt2e(model.eval(), quantizer)
     calibrator_rows = read_split_csv(data_dir / "splits" / "train.csv")[:calib_samples]
     calib_loader = DataLoader(
         CloudDataset(
@@ -146,7 +146,7 @@ def export_int8(model, meta, out_path: Path, data_dir, calib_samples):
         for images, _ in calib_loader:
             prepared(images)
 
-    quantized = quantize_pt2e.convert_pt2e(prepared)
+    quantized = convert_pt2e(prepared)
 
     sample = torch.zeros(1, 3, meta["img_size"], meta["img_size"])
     edge_model = converter.convert(quantized, (sample,))
