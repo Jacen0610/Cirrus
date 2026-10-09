@@ -13,6 +13,9 @@ pip install -r requirements.txt
 
 验证 GPU 可用: `python -c "import torch; print(torch.cuda.is_available())"`
 
+> 转换器包已从 `ai-edge-torch` 改名为 `litert-torch`（旧名冻结）。
+> requirements.txt 使用新名；`export.py` 对两个导入名都做了兼容。
+
 ## 数据集
 
 1. 从 [Zenodo: TJNU-Ground-based-Remote-Sensing-Cloud-Database](https://zenodo.org/records/3635497) 下载并解压；

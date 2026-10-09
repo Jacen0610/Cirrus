@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
 import shutil
 from pathlib import Path
@@ -28,6 +29,18 @@ from common import (
 )
 
 APP_ASSETS_DIR = Path(__file__).resolve().parents[2] / "app" / "src" / "main" / "assets"
+
+
+def load_converter():
+    """转换器曾用名 ai_edge_torch，现名 litert_torch——按可用性加载。"""
+    for module_name in ("ai_edge_torch", "litert_torch"):
+        try:
+            return importlib.import_module(module_name)
+        except ImportError:
+            continue
+    raise RuntimeError(
+        "未找到 PyTorch→LiteRT 转换包，请先: pip install litert-torch"
+    )
 
 
 def calibration_inputs(meta, data_dir, num_samples, batch_size):
@@ -47,7 +60,7 @@ def calibration_inputs(meta, data_dir, num_samples, batch_size):
 
 
 def export_float(model, meta, out_path: Path):
-    import ai_edge_torch
+    ai_edge_torch = load_converter()
 
     sample = torch.zeros(1, 3, meta["img_size"], meta["img_size"])
     edge_model = ai_edge_torch.convert(model.eval(), (sample,))
@@ -56,9 +69,9 @@ def export_float(model, meta, out_path: Path):
 
 
 def export_int8(model, meta, out_path: Path, data_dir, num_samples):
-    """int8 静态量化。ai-edge-torch 的量化 API 迭代较快，
+    """int8 静态量化。转换器量化 API 迭代较快，
     这里按当前文档的写法实现；版本不符时会给出明确指引。"""
-    import ai_edge_torch
+    ai_edge_torch = load_converter()
 
     sample = torch.zeros(1, 3, meta["img_size"], meta["img_size"])
     edge_model = ai_edge_torch.convert(model.eval(), (sample,))
@@ -71,7 +84,10 @@ def export_int8(model, meta, out_path: Path, data_dir, num_samples):
 def _make_calibrator(edge_model, meta, data_dir, num_samples):
     try:
         from ai_edge_torch.quantize.ptq import StaticRangeQuantizer
+    except ImportError:
+        from litert_torch.quantize.ptq import StaticRangeQuantizer
 
+    try:
         calibrator = StaticRangeQuantizer(edge_model)
         samples = list(calibration_inputs(meta, data_dir, num_samples, batch_size=16))
         calibrator.prepare_samples(samples) if hasattr(calibrator, "prepare_samples") else None
