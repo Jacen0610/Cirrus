@@ -25,8 +25,8 @@ EXPECTED_LABELS = [
     "cumulonimbus",
     "cumulus",
     "nimbostratus",
-    "stratus",
     "stratocumulus",
+    "stratus",
 ]
 
 # CCSN 数据集常见的缩写目录名 -> 全名
@@ -56,9 +56,10 @@ def seed_everything(seed: int = SEED) -> None:
 
 def load_labels(splits_dir: Path) -> list[str]:
     labels = json.loads((splits_dir / "labels.json").read_text())
-    if sorted(labels) != EXPECTED_LABELS:
+    # 只校验类别集合一致；顺序本身由 labels.json 单点定义并贯穿训练/导出/部署
+    if sorted(labels) != sorted(EXPECTED_LABELS):
         raise RuntimeError(
-            f"类别与安卓端词表不一致:\n  训练集: {sorted(labels)}\n  期望值: {EXPECTED_LABELS}"
+            f"类别与安卓端词表不一致:\n  训练集: {sorted(labels)}\n  期望值: {sorted(EXPECTED_LABELS)}"
         )
     return labels
 

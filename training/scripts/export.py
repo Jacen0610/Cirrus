@@ -109,7 +109,7 @@ def main() -> None:
     args = parser.parse_args()
 
     model, meta = load_checkpoint(args.checkpoint)
-    if sorted(meta["labels"]) != EXPECTED_LABELS:
+    if sorted(meta["labels"]) != sorted(EXPECTED_LABELS):
         raise SystemExit("checkpoint 类别与安卓端词表不一致，中止导出")
 
     out_dir = args.checkpoint.parent
