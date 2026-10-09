@@ -44,6 +44,21 @@ Android SDK / 端侧推理
 | 图片加载 | Coil 3 |
 | 测试 | JUnit + kotlinx-coroutines-test |
 
+## 模型迭代（CCSN 2,543 张 / 11 云属）
+
+同一管线三轮调参，全部可复现（`training/runs/*/metrics.csv`）：
+
+| 轮次 | 配置 | val top1 | 结论 |
+|---|---|---|---|
+| exp001 | 直觉配置（30 epoch, lr 3e-4） | 49.9% | 严重过拟合：train 95% vs val 50% |
+| exp002 | +强增强（旋转/狠裁剪）/标签平滑/低 LR | 49.3% | 过拟合治愈但欠训练 |
+| exp003 | +100 epoch 长训 | **55.7%** | **采用**：测试集 top1 50.8% / top3 76.7% |
+
+**混淆矩阵洞察**：视觉独特类召回高——航迹云 87%、层积云 83%、积雨云 68%；
+形态相近类（层云 19%、卷云 32%、高积云 35%）在 2.5k 数据量下不可分。
+因此产品设计为 **top-3 候选 + 用户一键修正**：模型收窄范围，人做终裁，
+修正记录可导出为带标签照片集（数据飞轮），直接反哺下一轮微调。
+
 ## 端侧实测（Pixel 7, Tensor G2）
 
 同一 float32 模型，Benchmark 页实测（预热 3 次、计时 20 次取统计）：
@@ -64,17 +79,27 @@ Android SDK / 端侧推理
 ## 构建
 
 ```bash
+# 调试版
 ./gradlew :app:assembleDebug
+
+# 发布版（首次需生成签名密钥）
+keytool -genkeypair -v -keystore cirrus.jks -keyalg RSA -keysize 2048 -validity 10000 -alias cirrus
+# 然后创建 keystore.properties（模板）：
+#   storeFile=../cirrus.jks
+#   storePassword=...
+#   keyAlias=cirrus
+#   keyPassword=...
+./gradlew :app:assembleRelease
 ```
 
 要求：JDK 25（Gradle 会按 `gradle-daemon-jvm.properties` 自动配置）。
 
 ## 路线图
 
-- [x] Phase 1：拍摄 → 识别（模拟）→ 保存 → 日记闭环
-- [ ] Phase 2：TJNU 数据集微调 MobileNetV4，int8 量化部署（`training/`）
-- [ ] Phase 3：手写 LiteRT 推理 + CPU/GPU 延迟 Benchmark 页
-- [ ] Phase 4：全文搜索、统计图表、release 发布
+- [x] Phase 1：拍摄 → 识别 → 保存 → 日记闭环（搜索/统计/修正导出）
+- [x] Phase 2：CCSN 数据集微调 MobileNetV4，float32 部署（`training/`）
+- [x] Phase 3：推理 Benchmark 页（CPU 线程对比实测；int8/GPU 经评估延后，见上）
+- [ ] Phase 4+：修正数据飞轮反哺微调、更多数据集（TJNU 申请中）、天气提示
 
 ## License
 

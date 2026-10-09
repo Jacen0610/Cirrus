@@ -26,6 +26,13 @@
     <string name="empty_diary_title">还没有观察记录</string>
     <string name="empty_diary_subtitle">回到相机，拍下第一朵云吧</string>
     <string name="label_corrected_with_arg">已修正为 %1$s</string>
+    <string name="search_hint">搜索云属…</string>
+    <string name="search_no_result">没有匹配的观察</string>
+    <string name="title_stats">观察统计</string>
+    <string name="action_export">导出修正</string>
+    <string name="export_none">还没有修正过的观察</string>
+    <string name="export_done">已导出：%1$s</string>
+    <string name="export_failed">导出失败：%1$s</string>
 
     <!-- Detail -->
     <string name="title_observation_detail">观察详情</string>

@@ -14,4 +14,9 @@ training/runs/
 __pycache__/
 *.pyc
 .venv/
+
+# Release signing (never commit)
+keystore.properties
+*.jks
+*.keystore
 local.properties

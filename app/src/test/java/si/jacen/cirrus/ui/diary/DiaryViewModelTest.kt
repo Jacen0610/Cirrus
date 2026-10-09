@@ -8,8 +8,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import si.jacen.cirrus.MainDispatcherRule
+import si.jacen.cirrus.data.export.CorrectionExport
 import si.jacen.cirrus.domain.model.Observation
 import si.jacen.cirrus.domain.repository.FakeObservationRepository
+import java.io.File
+
+private val noOpExporter = object : CorrectionExport {
+    override suspend fun export(observations: List<Observation>): File? = null
+}
 
 class DiaryViewModelTest {
 
@@ -26,7 +32,7 @@ class DiaryViewModelTest {
             photoFileName = "a.jpg",
         )
         val repository = FakeObservationRepository(listOf(observation))
-        val viewModel = DiaryViewModel(repository)
+        val viewModel = DiaryViewModel(repository, noOpExporter)
 
         val collected = mutableListOf<List<Observation>>()
         val collectionJob = backgroundScope.launch {
@@ -40,7 +46,7 @@ class DiaryViewModelTest {
 
     @Test
     fun `starts with empty list before subscription`() = runTest {
-        val viewModel = DiaryViewModel(FakeObservationRepository())
+        val viewModel = DiaryViewModel(FakeObservationRepository(), noOpExporter)
 
         assertEquals(emptyList<Observation>(), viewModel.observations.value)
     }
