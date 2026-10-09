@@ -78,7 +78,10 @@ class LitertCloudClassifier @Inject constructor(
     companion object {
         private const val MODEL_FILE = "cloud_classifier.tflite"
         private const val LABELS_FILE = "labels.txt"
-        private const val NUM_THREADS = 4
+
+        // 实测（Pixel 7, Benchmark 页）：1 线程与 4 线程延迟相同（~16.6ms），
+        // 算子过小导致多线程无收益——用单线程以降低功耗与发热
+        private const val NUM_THREADS = 1
         private const val TOP_K = 3
     }
 }
