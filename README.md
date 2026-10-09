@@ -54,7 +54,9 @@ Android SDK / 端侧推理
 | CPU · 4 线程 | 16.6 ms | 16.4 | 17.1 |
 | GPU delegate | 不可用* | — | — |
 
-\* litert-gpu 1.4.2 的 CompatibilityList 对新系统的保守判定；CPU 延迟已无感，未深究。
+\* litert-gpu 1.4.2 的 CompatibilityList 对新系统的保守判定（Pixel 7 的 Mali-G710 硬件实际支持）。
+经评估决定不启用 GPU 委托：CPU 延迟已无感，GPU 收益（约 16ms → 5ms）不可感知，
+且需引入首初始化编译开销与 fp16 精度差异的权衡。
 
 **发现**：该规模模型（3.5M 参数 / 224 输入）算子细小，多线程的调度开销恰好抵消并行收益——
 生产配置因此固定单线程（同延迟、更省电）。模型算力 371 MFLOPs，float32 体积 10.09 MB。
