@@ -52,8 +52,9 @@ def run(model, loader, device, labels) -> dict:
             confusion[target][pred] += 1
 
     print(f"top1 = {top1 / count:.4f}  top3 = {top3 / count:.4f}  (n={count})\n")
+    axis_label = "真实\\预测"
     header = "".join(f"{name[:6]:>8}" for name in labels)
-    print(f"{'真实\\预测':>10}{header}")
+    print(f"{axis_label:>10}{header}")
     for name, row in zip(labels, confusion):
         print(f"{name[:8]:>10}" + "".join(f"{value:>8}" for value in row))
 
