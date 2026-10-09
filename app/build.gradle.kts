@@ -76,5 +76,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     implementation(libs.litert.runtime)
+    implementation(libs.litert.gpu)
     testImplementation(libs.kotlinx.coroutines.test)
 }

@@ -44,37 +44,18 @@ class LitertCloudClassifier @Inject constructor(
 
         labels = context.assets.open(LABELS_FILE).bufferedReader().readLines()
             .filter { it.isNotBlank() }
-        require(labels.size == NUM_CLASSES) {
-            "labels.txt 有 ${labels.size} 类，与模型输出 $NUM_CLASSES 维不符"
+        require(labels.size == TensorPreprocess.NUM_CLASSES) {
+            "labels.txt 有 ${labels.size} 类，与模型输出 ${TensorPreprocess.NUM_CLASSES} 维不符"
         }
     }
 
     override suspend fun classify(bitmap: Bitmap): List<ClassificationResult> =
         withContext(Dispatchers.Default) {
-            val input = preprocess(bitmap)
-            val output = Array(1) { FloatArray(NUM_CLASSES) }
+            val input = TensorPreprocess.bitmapToInput(bitmap)
+            val output = Array(1) { FloatArray(TensorPreprocess.NUM_CLASSES) }
             interpreter.run(input, output)
             postprocess(output[0])
         }
-
-    /** bitmap → [1][224][224][3] 归一化浮点张量（NHWC）。 */
-    private fun preprocess(bitmap: Bitmap): Array<Array<Array<FloatArray>>> {
-        val scaled = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true)
-        val pixels = IntArray(INPUT_SIZE * INPUT_SIZE)
-        scaled.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE)
-
-        val tensor = Array(INPUT_SIZE) { row ->
-            Array(INPUT_SIZE) { col ->
-                val pixel = pixels[row * INPUT_SIZE + col]
-                floatArrayOf(
-                    (((pixel shr 16) and 0xFF) / 255f - MEAN[0]) / STD[0],
-                    (((pixel shr 8) and 0xFF) / 255f - MEAN[1]) / STD[1],
-                    ((pixel and 0xFF) / 255f - MEAN[2]) / STD[2],
-                )
-            }
-        }
-        return arrayOf(tensor)
-    }
 
     /** logits → softmax → 取 top-3 并按 labels 映射回 CloudGenus。 */
     private fun postprocess(logits: FloatArray): List<ClassificationResult> {
@@ -97,11 +78,7 @@ class LitertCloudClassifier @Inject constructor(
     companion object {
         private const val MODEL_FILE = "cloud_classifier.tflite"
         private const val LABELS_FILE = "labels.txt"
-        private const val INPUT_SIZE = 224
-        private const val NUM_CLASSES = 11
         private const val NUM_THREADS = 4
         private const val TOP_K = 3
-        private val MEAN = floatArrayOf(0.485f, 0.456f, 0.406f)
-        private val STD = floatArrayOf(0.229f, 0.224f, 0.225f)
     }
 }

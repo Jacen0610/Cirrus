@@ -47,6 +47,7 @@ import si.jacen.cirrus.R
 fun CameraScreen(
     onPhotoCaptured: (String) -> Unit,
     onOpenDiary: () -> Unit,
+    onOpenBenchmark: () -> Unit,
     viewModel: CameraViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -74,6 +75,7 @@ fun CameraScreen(
             viewModel = viewModel,
             onPhotoCaptured = onPhotoCaptured,
             onOpenDiary = onOpenDiary,
+            onOpenBenchmark = onOpenBenchmark,
         )
     }
 }
@@ -105,6 +107,7 @@ private fun CameraContent(
     viewModel: CameraViewModel,
     onPhotoCaptured: (String) -> Unit,
     onOpenDiary: () -> Unit,
+    onOpenBenchmark: () -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -160,6 +163,15 @@ private fun CameraContent(
                     .padding(16.dp),
             ) {
                 Text(stringResource(R.string.action_open_diary))
+            }
+
+            TextButton(
+                onClick = onOpenBenchmark,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp),
+            ) {
+                Text(stringResource(R.string.action_open_benchmark))
             }
 
             Button(

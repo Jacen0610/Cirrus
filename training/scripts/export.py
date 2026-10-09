@@ -1,12 +1,15 @@
-"""导出 tflite：float32 基线 + int8 全整数量化（尽力而为），并部署到安卓 assets。
+"""导出 tflite：float32 基线 + int8 全整数量化（PT2E），并部署到安卓 assets。
 
 用法:
-    python scripts/export.py --checkpoint runs/exp001/best.pt
+    python scripts/export.py --checkpoint runs/exp003/best.pt
 
 产物:
     runs/<exp>/cloud_classifier_float.tflite
-    runs/<exp>/cloud_classifier_int8.tflite   （量化 API 可用时）
-    ../app/src/main/assets/cloud_classifier.tflite  + labels.txt（自动拷贝）
+    runs/<exp>/cloud_classifier_int8.tflite   （量化成功时）
+    runs/<exp>/export_report.json             （精度/体积对比，README 素材）
+    ../app/src/main/assets/ 下:
+        cloud_classifier.tflite      ← 生产用（当前固定 float32，App 预处理为浮点）
+        cloud_classifier_float.tflite / cloud_classifier_int8.tflite ← Benchmark 页用
 """
 
 from __future__ import annotations
@@ -43,10 +46,9 @@ def load_converter():
     )
 
 
-def calibration_inputs(meta, data_dir, num_samples, batch_size):
-    """从训练集取样本用于量化校准。"""
-    rows = read_split_csv(data_dir / "splits" / "train.csv")[:num_samples]
-    loader = DataLoader(
+def make_eval_loader(meta, data_dir, split="val", batch_size=32):
+    rows = read_split_csv(data_dir / "splits" / f"{split}.csv")
+    return DataLoader(
         CloudDataset(
             rows=rows,
             root=data_dir / "raw",
@@ -55,55 +57,93 @@ def calibration_inputs(meta, data_dir, num_samples, batch_size):
         batch_size=batch_size,
         num_workers=4,
     )
-    for images, _ in loader:
-        yield (images,)
+
+
+@torch.no_grad()
+def quick_accuracy(model, loader) -> float:
+    model.eval()
+    correct = total = 0
+    for images, targets in loader:
+        outputs = model(images)
+        correct += (outputs.argmax(dim=1) == targets).sum().item()
+        total += targets.size(0)
+    return correct / total
 
 
 def export_float(model, meta, out_path: Path):
-    ai_edge_torch = load_converter()
+    converter = load_converter()
 
     sample = torch.zeros(1, 3, meta["img_size"], meta["img_size"])
-    edge_model = ai_edge_torch.convert(model.eval(), (sample,))
+    edge_model = converter.convert(model.eval(), (sample,))
     edge_model.export(str(out_path))
     print(f"float32 已导出: {out_path} ({out_path.stat().st_size / 1e6:.2f} MB)")
 
 
-def export_int8(model, meta, out_path: Path, data_dir, num_samples):
-    """int8 静态量化。转换器量化 API 迭代较快，
-    这里按当前文档的写法实现；版本不符时会给出明确指引。"""
-    ai_edge_torch = load_converter()
+def export_int8(model, meta, out_path: Path, data_dir, calib_samples):
+    """int8 静态量化（PT2E）：annotate → prepare → 校准 → convert → LiteRT 导出。
+
+    依赖当前 litert-torch 的 quantize API（PT2EQuantizer + torchao spec），
+    版本再变时按报错提示调整本函数。
+    """
+    converter = load_converter()
+    from litert_torch.quantize import PT2EQuantizer
+    from litert_torch.quantize.pt2e_quantizer_utils import QuantizationConfig
+    from torch.ao.quantization import quantize_pt2e, MinMaxObserver, PerChannelMinMaxObserver
+    from torchao.quantization.pt2e.quantizer import QuantizationSpec
+
+    act_spec = QuantizationSpec(
+        dtype=torch.int8,
+        qscheme=torch.per_tensor_symmetric,
+        quant_min=-128,
+        quant_max=127,
+        observer_or_fake_quant_ctr=MinMaxObserver,
+    )
+    weight_spec = QuantizationSpec(
+        dtype=torch.int8,
+        qscheme=torch.per_channel_symmetric,
+        quant_min=-128,
+        quant_max=127,
+        observer_or_fake_quant_ctr=PerChannelMinMaxObserver.with_args(ch_axis=0),
+    )
+
+    quantizer = PT2EQuantizer().set_global(
+        QuantizationConfig(
+            input_activation=act_spec,
+            output_activation=act_spec,
+            weight=weight_spec,
+            bias=QuantizationSpec(dtype=torch.float),
+            is_qat=False,
+            is_dynamic=False,
+        )
+    )
+
+    prepared = quantize_pt2e.prepare_pt2e(model.eval(), quantizer)
+    calibrator_rows = read_split_csv(data_dir / "splits" / "train.csv")[:calib_samples]
+    calib_loader = DataLoader(
+        CloudDataset(
+            rows=calibrator_rows,
+            root=data_dir / "raw",
+            transform=build_eval_transform(meta["img_size"], meta["mean"], meta["std"]),
+        ),
+        batch_size=16,
+        num_workers=4,
+    )
+    with torch.no_grad():
+        for images, _ in calib_loader:
+            prepared(images)
+
+    quantized = quantize_pt2e.convert_pt2e(prepared)
 
     sample = torch.zeros(1, 3, meta["img_size"], meta["img_size"])
-    edge_model = ai_edge_torch.convert(model.eval(), (sample,))
-    calibrator = _make_calibrator(edge_model, meta, data_dir, num_samples)
-    quantized = calibrator.calibrate_and_convert()
-    quantized.export(str(out_path))
+    edge_model = converter.convert(quantized, (sample,))
+    edge_model.export(str(out_path))
     print(f"int8 已导出: {out_path} ({out_path.stat().st_size / 1e6:.2f} MB)")
-
-
-def _make_calibrator(edge_model, meta, data_dir, num_samples):
-    try:
-        from ai_edge_torch.quantize.ptq import StaticRangeQuantizer
-    except ImportError:
-        from litert_torch.quantize.ptq import StaticRangeQuantizer
-
-    try:
-        calibrator = StaticRangeQuantizer(edge_model)
-        samples = list(calibration_inputs(meta, data_dir, num_samples, batch_size=16))
-        calibrator.prepare_samples(samples) if hasattr(calibrator, "prepare_samples") else None
-        return calibrator
-    except Exception as exc:  # noqa: BLE001
-        raise RuntimeError(
-            "ai-edge-torch 量化 API 与脚本预期不符。\n"
-            "请查看 https://github.com/google-ai-edge/ai-edge-torch 当前文档，\n"
-            "调整 export.py 中 _make_calibrator 的实现；"
-            f"或先使用 float32 模型。原始错误: {exc}"
-        ) from exc
+    return quantized
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--checkpoint", type=Path, default=Path("runs/exp001/best.pt"))
+    parser.add_argument("--checkpoint", type=Path, default=Path("runs/exp003/best.pt"))
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--calib-samples", type=int, default=200)
     args = parser.parse_args()
@@ -116,22 +156,36 @@ def main() -> None:
     float_path = out_dir / "cloud_classifier_float.tflite"
     int8_path = out_dir / "cloud_classifier_int8.tflite"
 
+    report = {"float_accuracy_val": quick_accuracy(model, make_eval_loader(meta, args.data_dir))}
+
     export_float(model, meta, float_path)
 
-    deployed = float_path
+    quantized_model = None
     try:
-        export_int8(model, meta, int8_path, args.data_dir, args.calib_samples)
-        deployed = int8_path
+        quantized_model = export_int8(model, meta, int8_path, args.data_dir, args.calib_samples)
+        report["int8_accuracy_val"] = quick_accuracy(
+            quantized_model, make_eval_loader(meta, args.data_dir)
+        )
     except Exception as exc:  # noqa: BLE001
-        print(f"[警告] int8 导出失败，将部署 float32 版本\n{exc}\n")
+        print(f"[警告] int8 导出失败，仅部署 float32\n{exc}\n")
 
+    # 部署：生产模型固定 float32（App 端预处理目前为浮点输入）；
+    # float/int8 双文件供 Benchmark 页对比
     APP_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
-    target = APP_ASSETS_DIR / "cloud_classifier.tflite"
-    shutil.copy2(deployed, target)
-    (APP_ASSETS_DIR / "labels.txt").write_text("\n".join(meta["labels"]) + "\n")
-    print(f"已部署 {deployed.name} -> {target}")
-    print("labels.txt（顺序即输出索引）:")
-    print(json.dumps(meta["labels"], indent=2))
+    deployed = APP_ASSETS_DIR / "cloud_classifier.tflite"
+    shutil.copy2(float_path, deployed)
+    shutil.copy2(float_path, APP_ASSETS_DIR / "cloud_classifier_float.tflite")
+    if int8_path.exists():
+        shutil.copy2(int8_path, APP_ASSETS_DIR / "cloud_classifier_int8.tflite")
+
+    report["float_size_mb"] = round(float_path.stat().st_size / 1e6, 2)
+    if int8_path.exists():
+        report["int8_size_mb"] = round(int8_path.stat().st_size / 1e6, 2)
+    (out_dir / "export_report.json").write_text(json.dumps(report, indent=2))
+
+    print("导出报告:")
+    print(json.dumps(report, indent=2))
+    print(f"已部署 -> {APP_ASSETS_DIR}")
 
 
 if __name__ == "__main__":

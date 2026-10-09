@@ -19,6 +19,7 @@ object Routes {
     const val RESULT = "result/{$ARG_PHOTO_FILE_NAME}"
     const val DIARY = "diary"
     const val OBSERVATION = "observation/{$ARG_OBSERVATION_ID}"
+    const val BENCHMARK = "benchmark"
 
     fun result(photoFileName: String) = "result/$photoFileName"
     fun observation(id: Long) = "observation/$id"
@@ -38,6 +39,13 @@ fun CirrusNavHost() {
                     navController.navigate(Routes.result(fileName))
                 },
                 onOpenDiary = { navController.navigate(Routes.DIARY) },
+                onOpenBenchmark = { navController.navigate(Routes.BENCHMARK) },
+            )
+        }
+
+        composable(Routes.BENCHMARK) {
+            si.jacen.cirrus.ui.benchmark.BenchmarkScreen(
+                onBack = { navController.popBackStack() },
             )
         }
 

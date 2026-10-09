@@ -37,6 +37,15 @@
     <string name="dialog_delete_confirm">删除</string>
     <string name="detail_missing">这条记录已不存在</string>
 
+    <!-- Benchmark -->
+    <string name="action_open_benchmark">基准测试</string>
+    <string name="title_benchmark">推理基准测试</string>
+    <string name="benchmark_description">对已部署模型分别以 CPU（1/4 线程）与 GPU 委托各运行 20 次推理，报告延迟统计（预热 3 次后计时）。</string>
+    <string name="benchmark_run">开始测量</string>
+    <string name="benchmark_running">测量中…</string>
+    <string name="benchmark_latency_ms">平均 %1$.1f ms · 最快 %2$.1f · 最慢 %3$.1f</string>
+    <string name="benchmark_unavailable">该配置不可用</string>
+
     <!-- Cloud genera (CCSN 11 classes) -->
     <string name="genus_altocumulus">高积云</string>
     <string name="genus_altostratus">高层云</string>
