@@ -7,4 +7,11 @@
 /captures
 .externalNativeBuild
 .cxx
+
+# Python training pipeline
+training/data/
+training/runs/
+__pycache__/
+*.pyc
+.venv/
 local.properties
