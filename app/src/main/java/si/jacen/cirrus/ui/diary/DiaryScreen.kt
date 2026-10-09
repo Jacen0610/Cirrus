@@ -49,7 +49,7 @@ import java.io.File
 
 @Composable
 fun DiaryScreen(
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenObservation: (Long) -> Unit,
     viewModel: DiaryViewModel = hiltViewModel(),
 ) {
@@ -109,7 +109,7 @@ private fun DiaryScaffold(
     allObservationsEmpty: Boolean,
     exporting: Boolean,
     onExport: () -> Unit,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onOpenObservation: (Long) -> Unit,
     snackbarHostState: SnackbarHostState,
     photoFileOf: (Observation) -> File?,
@@ -120,8 +120,10 @@ private fun DiaryScaffold(
             TopAppBar(
                 title = { Text(stringResource(R.string.title_diary)) },
                 navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text(stringResource(R.string.action_back))
+                    onBack?.let { back ->
+                        TextButton(onClick = back) {
+                            Text(stringResource(R.string.action_back))
+                        }
                     }
                 },
                 actions = {

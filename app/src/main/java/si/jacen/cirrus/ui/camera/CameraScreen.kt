@@ -22,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,8 +45,6 @@ import si.jacen.cirrus.R
 @Composable
 fun CameraScreen(
     onPhotoCaptured: (String) -> Unit,
-    onOpenDiary: () -> Unit,
-    onOpenBenchmark: () -> Unit,
     viewModel: CameraViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -68,20 +65,17 @@ fun CameraScreen(
     if (!hasCameraPermission) {
         PermissionRationale(
             onRetry = { permissionLauncher.launch(Manifest.permission.CAMERA) },
-            onOpenDiary = onOpenDiary,
         )
     } else {
         CameraContent(
             viewModel = viewModel,
             onPhotoCaptured = onPhotoCaptured,
-            onOpenDiary = onOpenDiary,
-            onOpenBenchmark = onOpenBenchmark,
         )
     }
 }
 
 @Composable
-private fun PermissionRationale(onRetry: () -> Unit, onOpenDiary: () -> Unit) {
+private fun PermissionRationale(onRetry: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,9 +90,6 @@ private fun PermissionRationale(onRetry: () -> Unit, onOpenDiary: () -> Unit) {
         Button(onClick = onRetry, modifier = Modifier.padding(top = 16.dp)) {
             Text(stringResource(R.string.action_retry_permission))
         }
-        TextButton(onClick = onOpenDiary, modifier = Modifier.padding(top = 8.dp)) {
-            Text(stringResource(R.string.action_open_diary))
-        }
     }
 }
 
@@ -106,8 +97,6 @@ private fun PermissionRationale(onRetry: () -> Unit, onOpenDiary: () -> Unit) {
 private fun CameraContent(
     viewModel: CameraViewModel,
     onPhotoCaptured: (String) -> Unit,
-    onOpenDiary: () -> Unit,
-    onOpenBenchmark: () -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -155,24 +144,6 @@ private fun CameraContent(
                 factory = { previewView },
                 modifier = Modifier.fillMaxSize(),
             )
-
-            TextButton(
-                onClick = onOpenDiary,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp),
-            ) {
-                Text(stringResource(R.string.action_open_diary))
-            }
-
-            TextButton(
-                onClick = onOpenBenchmark,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(16.dp),
-            ) {
-                Text(stringResource(R.string.action_open_benchmark))
-            }
 
             Button(
                 onClick = {

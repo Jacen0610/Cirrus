@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.Cirrus" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Android 12+ 系统 SplashScreen：启动展示云朵图标，结束后回落到应用主题 -->
+    <style name="Theme.Cirrus.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/cirrus_sky</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_cloud</item>
+        <item name="postSplashScreenTheme">@style/Theme.Cirrus</item>
+    </style>
 </resources>

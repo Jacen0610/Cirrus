@@ -9,7 +9,6 @@
 
     <!-- Common actions -->
     <string name="action_back">返回</string>
-    <string name="action_open_diary">观察日记</string>
     <string name="action_save">保存观察</string>
     <string name="action_discard">放弃</string>
     <string name="action_delete">删除记录</string>
@@ -43,6 +42,34 @@
     <string name="dialog_delete_message">照片与记录将一并删除，无法恢复。</string>
     <string name="dialog_delete_confirm">删除</string>
     <string name="detail_missing">这条记录已不存在</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_home">主页</string>
+    <string name="tab_capture">拍摄</string>
+    <string name="tab_diary">日记</string>
+    <string name="tab_model">模型</string>
+
+    <!-- Home -->
+    <string name="home_tagline">拍云 · 识别 · 记录，完全离线的云属观察日记</string>
+    <string name="home_feature_capture">📷 拍摄天空，端侧 AI 给出云属候选</string>
+    <string name="home_feature_diary">📔 观察日记：时间线、搜索与统计</string>
+    <string name="home_feature_offline">🔒 识别与数据完全在本机，无需联网</string>
+    <string name="action_start_capture">开始拍摄</string>
+
+    <!-- Model info -->
+    <string name="model_title">模型信息</string>
+    <string name="model_section_model">模型</string>
+    <string name="model_model_desc">MobileNetV4-Conv-Small 微调 · CCSN 数据集（2,543 张 / 11 云属）· float32 · 10.09 MB · 输入 224×224</string>
+    <string name="model_section_accuracy">精度</string>
+    <string name="model_accuracy_desc">测试集 top1 50.8% / top3 76.7%（验证集 55.7%）。航迹云、层积云等独特形态可靠识别；相近形态类由 top-3 候选 + 人工修正兜底。</string>
+    <string name="model_section_latency">端侧延迟（Pixel 7）</string>
+    <string name="model_latency_cpu1">CPU · 1 线程：平均 16.8 ms</string>
+    <string name="model_latency_cpu4">CPU · 4 线程：平均 16.6 ms</string>
+    <string name="model_latency_gpu">GPU 委托：经评估不启用（详见工程决策）</string>
+    <string name="model_section_decisions">工程决策</string>
+    <string name="model_decision_int8">int8 量化：管线已实现，CPU 延迟已无感，暂缓启用</string>
+    <string name="model_decision_gpu">GPU 委托：16ms 无感，收益不可感知，不引入</string>
+    <string name="model_decision_threads">单线程推理：实测多线程无收益，更省电</string>
 
     <!-- Benchmark -->
     <string name="action_open_benchmark">基准测试</string>

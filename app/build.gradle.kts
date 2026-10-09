@@ -99,5 +99,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.litert.runtime)
     implementation(libs.litert.gpu)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.compose.material.icons.core)
     testImplementation(libs.kotlinx.coroutines.test)
 }
