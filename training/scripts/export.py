@@ -88,8 +88,14 @@ def export_int8(model, meta, out_path: Path, data_dir, calib_samples):
     converter = load_converter()
     from litert_torch.quantize import PT2EQuantizer
     from litert_torch.quantize.pt2e_quantizer_utils import QuantizationConfig
-    from torch.ao.quantization import quantize_pt2e, MinMaxObserver, PerChannelMinMaxObserver
+    from torch.ao.quantization import MinMaxObserver, PerChannelMinMaxObserver
     from torchao.quantization.pt2e.quantizer import QuantizationSpec
+
+    # torch 2.13 起 PT2E 从 torch.ao 迁到了 torchao，做双版本兼容
+    try:
+        from torch.ao.quantization.quantize_pt2e import convert_pt2e, prepare_pt2e
+    except ImportError:
+        from torchao.quantization.pt2e.quantize_pt2e import convert_pt2e, prepare_pt2e
 
     act_spec = QuantizationSpec(
         dtype=torch.int8,
