@@ -105,9 +105,11 @@ def load_checkpoint(checkpoint_path: Path) -> tuple[torch.nn.Module, dict]:
 def build_train_transform(img_size: int, mean: tuple, std: tuple):
     from torchvision import transforms as T
 
+    # 小数据集需要强增强抑制过拟合：天空图对旋转/裁剪不敏感
     return T.Compose(
         [
-            T.RandomResizedCrop(img_size, scale=(0.7, 1.0), interpolation=T.InterpolationMode.BICUBIC),
+            T.RandomResizedCrop(img_size, scale=(0.5, 1.0), interpolation=T.InterpolationMode.BICUBIC),
+            T.RandomRotation(degrees=30),
             T.RandomHorizontalFlip(),
             T.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
             T.ToTensor(),

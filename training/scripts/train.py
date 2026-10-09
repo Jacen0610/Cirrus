@@ -47,14 +47,14 @@ def evaluate(model, loader, device) -> tuple[float, float, float]:
     return loss_sum / count, top1 / count, top3 / count
 
 
-def train_one_epoch(model, loader, optimizer, scaler, device, epoch) -> float:
+def train_one_epoch(model, loader, optimizer, scaler, device, epoch, label_smoothing) -> float:
     model.train()
     loss_sum, count = 0.0, 0
     for step, (images, targets) in enumerate(loader):
         images, targets = images.to(device), targets.to(device)
         optimizer.zero_grad(set_to_none=True)
         with autocast(device_type=device.type):
-            loss = F.cross_entropy(model(images), targets)
+            loss = F.cross_entropy(model(images), targets, label_smoothing=label_smoothing)
         scaler.scale(loss).backward()
         scaler.step(optimizer)
         scaler.update()
@@ -70,9 +70,11 @@ def main() -> None:
     parser.add_argument("--model", default="mobilenetv4_conv_small")
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--output", type=Path, default=Path("runs/exp001"))
-    parser.add_argument("--epochs", type=int, default=30)
+    parser.add_argument("--epochs", type=int, default=40)
     parser.add_argument("--batch-size", type=int, default=64)
-    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--lr", type=float, default=1e-4)
+    parser.add_argument("--weight-decay", type=float, default=0.05)
+    parser.add_argument("--label-smoothing", type=float, default=0.1)
     parser.add_argument("--num-workers", type=int, default=8)
     args = parser.parse_args()
 
@@ -112,7 +114,7 @@ def main() -> None:
         for split, dataset in datasets.items()
     }
 
-    optimizer = AdamW(model.parameters(), lr=args.lr, weight_decay=0.01)
+    optimizer = AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs)
     scaler = GradScaler(device.type)
 
@@ -133,7 +135,9 @@ def main() -> None:
     for epoch in range(1, args.epochs + 1):
         print(f"== epoch {epoch}/{args.epochs} lr={scheduler.get_last_lr()[0]:.2e}")
         model.to(device)
-        train_loss = train_one_epoch(model, loaders["train"], optimizer, scaler, device, epoch)
+        train_loss = train_one_epoch(
+            model, loaders["train"], optimizer, scaler, device, epoch, args.label_smoothing
+        )
 
         # 训练集上的准确率（同一增强，衡量收敛趋势足够）
         train_eval = evaluate(model, loaders["train"], device)
