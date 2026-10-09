@@ -75,5 +75,6 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.litert.runtime)
     testImplementation(libs.kotlinx.coroutines.test)
 }

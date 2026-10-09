@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import si.jacen.cirrus.data.local.PhotoFileStore
+import si.jacen.cirrus.di.LitertEngine
 import si.jacen.cirrus.domain.classifier.ClassificationResult
 import si.jacen.cirrus.domain.classifier.CloudClassifier
 import si.jacen.cirrus.domain.model.Observation
@@ -30,7 +31,7 @@ sealed interface ResultUiState {
 @HiltViewModel
 class ResultViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val classifier: CloudClassifier,
+    @LitertEngine private val classifier: CloudClassifier,
     private val repository: ObservationRepository,
     private val photoStore: PhotoFileStore,
 ) : ViewModel() {
