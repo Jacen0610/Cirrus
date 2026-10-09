@@ -67,7 +67,7 @@ def train_one_epoch(model, loader, optimizer, scaler, device, epoch) -> float:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default="mobilenetv4_conv_small.e500_r256_in1k")
+    parser.add_argument("--model", default="mobilenetv4_conv_small")
     parser.add_argument("--data-dir", type=Path, default=Path("data"))
     parser.add_argument("--output", type=Path, default=Path("runs/exp001"))
     parser.add_argument("--epochs", type=int, default=30)
