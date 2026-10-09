@@ -37,12 +37,16 @@
     <string name="dialog_delete_confirm">删除</string>
     <string name="detail_missing">这条记录已不存在</string>
 
-    <!-- Cloud genera -->
-    <string name="genus_cumulus">积云</string>
+    <!-- Cloud genera (CCSN 11 classes) -->
     <string name="genus_altocumulus">高积云</string>
-    <string name="genus_cirrus">卷云</string>
+    <string name="genus_altostratus">高层云</string>
+    <string name="genus_cirrocumulus">卷积云</string>
     <string name="genus_cirrostratus">卷层云</string>
-    <string name="genus_stratocumulus">层积云</string>
-    <string name="genus_stratus">层云</string>
+    <string name="genus_cirrus">卷云</string>
+    <string name="genus_contrails">航迹云</string>
     <string name="genus_cumulonimbus">积雨云</string>
+    <string name="genus_cumulus">积云</string>
+    <string name="genus_nimbostratus">雨层云</string>
+    <string name="genus_stratus">层云</string>
+    <string name="genus_stratocumulus">层积云</string>
 </resources>

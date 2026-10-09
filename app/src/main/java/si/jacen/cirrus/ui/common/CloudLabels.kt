@@ -11,11 +11,15 @@ fun String.asCloudGenus(): CloudGenus? =
 /** 云属的本地化文案资源 ID——UI 层专用，domain 不感知资源系统。 */
 @StringRes
 fun CloudGenus.labelRes(): Int = when (this) {
-    CloudGenus.CUMULUS -> R.string.genus_cumulus
     CloudGenus.ALTOCUMULUS -> R.string.genus_altocumulus
-    CloudGenus.CIRRUS -> R.string.genus_cirrus
+    CloudGenus.ALTOSTRATUS -> R.string.genus_altostratus
+    CloudGenus.CIRROCUMULUS -> R.string.genus_cirrocumulus
     CloudGenus.CIRROSTRATUS -> R.string.genus_cirrostratus
-    CloudGenus.STRATOCUMULUS -> R.string.genus_stratocumulus
-    CloudGenus.STRATUS -> R.string.genus_stratus
+    CloudGenus.CIRRUS -> R.string.genus_cirrus
+    CloudGenus.CONTRAILS -> R.string.genus_contrails
     CloudGenus.CUMULONIMBUS -> R.string.genus_cumulonimbus
+    CloudGenus.CUMULUS -> R.string.genus_cumulus
+    CloudGenus.NIMBOSTRATUS -> R.string.genus_nimbostratus
+    CloudGenus.STRATUS -> R.string.genus_stratus
+    CloudGenus.STRATOCUMULUS -> R.string.genus_stratocumulus
 }

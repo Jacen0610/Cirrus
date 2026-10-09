@@ -13,7 +13,7 @@ import random
 from collections import Counter
 from pathlib import Path
 
-from common import EXPECTED_LABELS, IMAGE_EXTENSIONS, SEED
+from common import ABBREV_ALIASES, EXPECTED_LABELS, IMAGE_EXTENSIONS, SEED
 
 TRAIN_RATIO = 0.70
 VAL_RATIO = 0.15
@@ -24,9 +24,10 @@ def collect_images(raw_dir: Path) -> dict[str, list[Path]]:
     for entry in sorted(raw_dir.iterdir()):
         if not entry.is_dir():
             continue
-        name = entry.name.strip().lower()
+        # CCSN 解压出的目录可能是缩写（Ac/Ci/Cb...），统一映射为全名
+        name = ABBREV_ALIASES.get(entry.name.strip().lower(), entry.name.strip().lower())
         if name not in EXPECTED_LABELS:
-            print(f"[警告] 忽略未知类别目录: {entry.name}（应为 {EXPECTED_LABELS} 之一）")
+            print(f"[警告] 忽略未知类别目录: {entry.name}（应为 {EXPECTED_LABELS} 之一或其缩写）")
             continue
         images = sorted(
             p for p in entry.iterdir()

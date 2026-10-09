@@ -1,6 +1,6 @@
 # Cirrus 模型训练管线
 
-微调 MobileNetV4 于 TJNU 地基云图数据集（GRSCD，12k 张 / 7 云属），导出量化 tflite 部署到安卓端。
+微调 MobileNetV4 于 CCSN 云图数据集（2,543 张 / 11 个 WMO 云属），导出量化 tflite 部署到安卓端。
 
 ## 环境
 
@@ -16,21 +16,30 @@ pip install -r requirements.txt
 > 转换器包已从 `ai-edge-torch` 改名为 `litert-torch`（旧名冻结）。
 > requirements.txt 使用新名；`export.py` 对两个导入名都做了兼容。
 
-## 数据集
+## 数据集（CCSN）
 
-1. 从 [Zenodo: TJNU-Ground-based-Remote-Sensing-Cloud-Database](https://zenodo.org/records/3635497) 下载并解压；
-2. 整理为如下布局（目录名 = 云属英文小写）:
+1. 从 Kaggle 下载: [Cirrus Cumulus Stratus Nimbus (CCSN) Database](https://www.kaggle.com/datasets/mmichelli/cirrus-cumulus-stratus-nimbus-ccsn-database)
+   （免费账号即可；也可用官方 [Harvard Dataverse 版本](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/CADDPD)）
+2. 解压后把各类目录放入 `training/data/raw/`。目录名用云属全名（小写）或 CCSN 缩写均可，
+   `prepare_data.py` 会自动把 Ac/Ci/Cb 等缩写映射为 altocumulus/cirrus/cumulonimbus 等全名:
 
 ```
 training/data/raw/
-├── altocumulus/
-├── cirrus/
-├── cirrostratus/
-├── cumulonimbus/
-├── cumulus/
-├── stratus/
-└── stratocumulus/
+├── altocumulus/   (或 Ac/)
+├── altostratus/   (或 As/)
+├── cirrocumulus/  (或 Cc/)
+├── cirrostratus/  (或 Cs/)
+├── cirrus/        (或 Ci/)
+├── contrails/     (或 Ct/)
+├── cumulonimbus/  (或 Cb/)
+├── cumulus/       (或 Cu/)
+├── nimbostratus/  (或 Ns/)
+├── stratus/       (或 St/)
+└── stratocumulus/ (或 Sc/)
 ```
+
+> 备选：TJNU GRSCD（19k 张、7 类天空类型，含晴空/混合云）为协议授权制，
+> 可向作者申请后作为第二数据集对比实验；其类别体系与当前词表不同，需另行适配。
 
 ## 流程
 

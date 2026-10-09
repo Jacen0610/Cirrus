@@ -14,16 +14,35 @@ from torch.utils.data import Dataset
 
 SEED = 42
 
-# 与安卓端 CloudGenus.wireName 对齐的七个云属（有序即索引约定）
+# 与安卓端 CloudGenus.wireName 对齐的十一个云属（CCSN 数据集，有序即索引约定）
 EXPECTED_LABELS = [
     "altocumulus",
-    "cirrus",
+    "altostratus",
+    "cirrocumulus",
     "cirrostratus",
+    "cirrus",
+    "contrails",
     "cumulonimbus",
     "cumulus",
+    "nimbostratus",
     "stratus",
     "stratocumulus",
 ]
+
+# CCSN 数据集常见的缩写目录名 -> 全名
+ABBREV_ALIASES = {
+    "ac": "altocumulus",
+    "as": "altostratus",
+    "cb": "cumulonimbus",
+    "cc": "cirrocumulus",
+    "ci": "cirrus",
+    "cs": "cirrostratus",
+    "ct": "contrails",
+    "cu": "cumulus",
+    "ns": "nimbostratus",
+    "sc": "stratocumulus",
+    "st": "stratus",
+}
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
 
