@@ -73,6 +73,10 @@ python scripts/export.py --checkpoint runs/exp001/best.pt
 
 ## 已知注意点
 
-- **量化 API**: ai-edge-torch 的量化接口迭代较快，`export.py` 的 int8 路径在版本不符时会降级为 float32 并给出提示；如遇此情况，参照 [ai-edge-torch 文档](https://github.com/google-ai-edge/ai-edge-torch) 微调 `_make_calibrator` 即可。
-- **类别词表**: 七个云属名与安卓端 `CloudGenus.wireName` 一一对应，`prepare_data.py` 与 `export.py` 都会做一致性校验，防止训练/部署两端词表漂移。
-- 量化后建议重跑一次评估对比掉点（把 float/int8 模型分别评估，写进 README 的对比表）。
+- **int8 量化：已实现、暂缓启用**。`export.py` 内置 PT2E 全整数量化管线
+  （prepare → 校准 → convert，兼容 torch 2.13 的 torchao 迁移），
+  但在 litert-torch × torchao 的版本接缝处未完全跑通。
+  基于目标设备 float32 推理 10–30ms 的实测（用户无感），经评估暂不阻塞：
+  生产模型固定 float32，量化作为后续升级路径保留。
+- **类别词表**: 十一个云属名与安卓端 `CloudGenus.wireName` 一一对应，
+  `prepare_data.py` 与 `export.py` 都会做一致性校验，防止训练/部署两端词表漂移。
