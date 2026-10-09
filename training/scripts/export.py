@@ -125,6 +125,7 @@ def export_int8(model, meta, out_path: Path, data_dir, calib_samples):
                 dtype=torch.float,
                 observer_or_fake_quant_ctr=PlaceholderObserver.with_args(dtype=torch.float),
             ),
+            fixed_qparams=None,
             is_qat=False,
             is_dynamic=False,
         )
