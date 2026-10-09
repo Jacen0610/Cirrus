@@ -180,7 +180,12 @@ def main() -> None:
             quantized_model, make_eval_loader(meta, args.data_dir)
         )
     except Exception as exc:  # noqa: BLE001
+        import traceback
+
+        log_path = out_dir / "export_int8_error.log"
+        log_path.write_text(traceback.format_exc())
         print(f"[警告] int8 导出失败，仅部署 float32\n{exc}\n")
+        print(f"完整 traceback 已写入 {log_path}")
 
     # 部署：生产模型固定 float32（App 端预处理目前为浮点输入）；
     # float/int8 双文件供 Benchmark 页对比
