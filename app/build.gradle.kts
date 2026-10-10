@@ -23,7 +23,7 @@ android {
         minSdk = 29
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0" // 构建时版本号改这里就可以自动生成对应版本号apk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
