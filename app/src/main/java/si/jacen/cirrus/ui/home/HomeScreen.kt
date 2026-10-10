@@ -18,8 +18,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import si.jacen.cirrus.R
+import si.jacen.cirrus.ui.theme.CirrusTheme
 
 /** 品牌主页：应用说明 + 拍摄入口。相机在此页不初始化，权限由用户点击进入拍摄页时再请求。 */
 @Composable
@@ -68,5 +70,13 @@ fun HomeScreen(onStartCapture: () -> Unit) {
         ) {
             Text(stringResource(R.string.action_start_capture))
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+private fun HomeScreenPreview() {
+    CirrusTheme {
+        HomeScreen(onStartCapture = {})
     }
 }
