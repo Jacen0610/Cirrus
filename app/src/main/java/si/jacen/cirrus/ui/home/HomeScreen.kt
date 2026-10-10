@@ -44,13 +44,14 @@ fun HomeScreen(onStartCapture: () -> Unit) {
         )
 
         Text(
-            text = stringResource(R.string.app_name),
-            style = MaterialTheme.typography.displayLarge,
+            text = stringResource(R.string.app_name) + "(" +
+                    stringResource(R.string.app_name_zh) + ")",
+            style = MaterialTheme.typography.displayMedium,
             modifier = Modifier.padding(top = 16.dp),
         )
         Text(
             text = stringResource(R.string.home_tagline),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(top = 8.dp),
         )

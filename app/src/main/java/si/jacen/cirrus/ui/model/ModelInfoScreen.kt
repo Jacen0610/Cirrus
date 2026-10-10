@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import si.jacen.cirrus.R
+import si.jacen.cirrus.ui.theme.CirrusTheme
 
 /** 模型信息页：把训练/部署的真实指标与工程决策直接呈现给用户与审阅者。 */
 @Composable
@@ -30,30 +32,30 @@ fun ModelInfoScreen(onOpenBenchmark: () -> Unit) {
         Text(
             text = stringResource(R.string.model_title),
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 24.dp),
         )
 
         InfoCard(titleRes = R.string.model_section_model) {
-            Text(stringResource(R.string.model_model_desc), style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.model_model_desc), style = MaterialTheme.typography.bodySmall)
         }
 
         InfoCard(titleRes = R.string.model_section_accuracy) {
-            Text(stringResource(R.string.model_accuracy_desc), style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.model_accuracy_desc), style = MaterialTheme.typography.bodySmall)
         }
 
         InfoCard(titleRes = R.string.model_section_latency) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(R.string.model_latency_cpu1), style = MaterialTheme.typography.bodyMedium)
-                Text(stringResource(R.string.model_latency_cpu4), style = MaterialTheme.typography.bodyMedium)
-                Text(stringResource(R.string.model_latency_gpu), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.model_latency_cpu1), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.model_latency_cpu4), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.model_latency_gpu), style = MaterialTheme.typography.bodySmall)
             }
         }
 
         InfoCard(titleRes = R.string.model_section_decisions) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(R.string.model_decision_int8), style = MaterialTheme.typography.bodyMedium)
-                Text(stringResource(R.string.model_decision_gpu), style = MaterialTheme.typography.bodyMedium)
-                Text(stringResource(R.string.model_decision_threads), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.model_decision_int8), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.model_decision_gpu), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.model_decision_threads), style = MaterialTheme.typography.bodySmall)
             }
         }
 
@@ -79,5 +81,13 @@ private fun InfoCard(titleRes: Int, content: @Composable () -> Unit) {
             )
             content()
         }
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 720)
+@Composable
+private fun ModelInfoScreenPreview() {
+    CirrusTheme() {
+        ModelInfoScreen(onOpenBenchmark = {})
     }
 }
