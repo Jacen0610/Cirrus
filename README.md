@@ -78,14 +78,10 @@ Android SDK / 端侧推理
 
 ## 自定义品牌图
 
-启动页（Splash）与主页中心 Logo 共用同一张图片资源：`app/src/main/res/drawable/brand_logo.xml`
-（默认为矢量白云）。换成自己的图只需三步：
-
-1. 准备图片：建议 **512×512、透明背景的 PNG/WebP**；用于启动页时内容居中、四周留约 1/6 边距（系统会裁入圆形，太贴边会被裁掉）；
-2. 把文件放到 `app/src/main/res/drawable-nodpi/brand_logo.png`（`nodpi` 目录避免按屏幕密度被二次缩放）；
-3. **删除**默认的 `app/src/main/res/drawable/brand_logo.xml`（同名资源只允许存在一个，否则构建报 duplicate resource），重新构建安装——启动页与主页同时生效。
-
-启动页背景色改 `res/values/colors.xml` 里的 `cirrus_sky`；主页 Logo 底色同步使用该颜色。
+启动页与主页 Logo 使用成品图标 `app/src/main/res/drawable-nodpi/brand_logo_colored.png`
+（135° 线性渐变 #6366F1→#06B6D4 + 白色卷云，-7° 倾斜）。启动页为纯白背景 +
+彩色图标的反白样式（系统自动裁圆）；主页同图圆形展示；桌面启动图标与它同源
+（经 Image Asset Studio 用分层素材生成）。换图时替换该 PNG（建议 1024×1024）重新构建即可。
 
 ## 构建
 

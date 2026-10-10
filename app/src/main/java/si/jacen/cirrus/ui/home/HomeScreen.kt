@@ -1,9 +1,7 @@
 package si.jacen.cirrus.ui.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -34,23 +31,15 @@ fun HomeScreen(onStartCapture: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // 品牌图：与启动页共用 brand_logo 资源，替换该文件即可全局换图（见 README）
-        Box(
+        // 品牌图：彩色成品图标（渐变+云缕），与桌面启动图标、启动页同源
+        Image(
+            painter = painterResource(R.drawable.brand_logo_colored),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(140.dp)
-                .clip(CircleShape)
-                .background(colorResource(R.color.cirrus_sky)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Image(
-                painter = painterResource(R.drawable.brand_logo),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(20.dp),
-            )
-        }
+                .clip(CircleShape),
+        )
 
         Text(
             text = stringResource(R.string.app_name),
