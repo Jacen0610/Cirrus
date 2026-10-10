@@ -3,10 +3,10 @@
 
     <style name="Theme.Cirrus" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <!-- Android 12+ 系统 SplashScreen：纯白背景 + 彩色品牌图标（Gmail 式反白），结束后回落到应用主题 -->
+    <!-- Android 12+ 系统 SplashScreen：纯白背景 + 天蓝色卷云（Gmail 式反白），结束后回落到应用主题 -->
     <style name="Theme.Cirrus.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@android:color/white</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/brand_logo_colored</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo</item>
         <item name="postSplashScreenTheme">@style/Theme.Cirrus</item>
     </style>
 </resources>

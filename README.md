@@ -78,10 +78,8 @@ Android SDK / 端侧推理
 
 ## 自定义品牌图
 
-启动页与主页 Logo 使用成品图标 `app/src/main/res/drawable-nodpi/brand_logo_colored.png`
-（135° 线性渐变 #6366F1→#06B6D4 + 白色卷云，-7° 倾斜）。启动页为纯白背景 +
-彩色图标的反白样式（系统自动裁圆）；主页同图圆形展示；桌面启动图标与它同源
-（经 Image Asset Studio 用分层素材生成）。换图时替换该 PNG（建议 1024×1024）重新构建即可。
+- **启动页**：纯白背景 + 天蓝色卷云（`drawable/splash_logo.xml`，Gmail 式反白），换色改该文件的 fillColor；
+- **主页 Logo**：成品彩色图标 `drawable-nodpi/brand_logo_colored.png`（135° 渐变 + 白色卷云），与桌面启动图标同源，替换该 PNG 重新构建即可。
 
 ## 构建
 
