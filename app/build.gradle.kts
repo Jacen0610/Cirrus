@@ -60,6 +60,15 @@ android {
     }
 }
 
+// release 产物自动命名为 cirrus-v{版本号}.apk，供 GitHub Release 分发
+androidComponents {
+    onVariants(selector().withBuildType("release")) { variant ->
+        variant.outputs.forEach { output ->
+            output.outputFileName.set("cirrus-v${output.versionName.get()}.apk")
+        }
+    }
+}
+
 configurations.all {
     resolutionStrategy {
         // AGP 内置 Kotlin 2.2 无法读取 Kotlin 2.4 元数据；Coil 等新库把 stdlib
