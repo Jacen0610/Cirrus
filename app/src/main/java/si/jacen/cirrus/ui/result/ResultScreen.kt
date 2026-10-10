@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -99,18 +97,19 @@ private fun ReadyContent(
     onDiscard: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // 固定布局：照片用 weight 吃掉剩余高度（超出裁剪），候选与按钮始终可见
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         AsyncImage(
             model = photoFile,
             contentDescription = null,
-            contentScale = ContentScale.FillWidth,
+            contentScale = ContentScale.Crop,
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
                 .padding(top = 8.dp)
                 .clip(RoundedCornerShape(16.dp)),
@@ -141,7 +140,9 @@ private fun ReadyContent(
         }
         TextButton(
             onClick = onDiscard,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
         ) {
             Text(stringResource(R.string.action_discard))
         }
