@@ -6,14 +6,14 @@
 
     <!-- 启动页专用：云缕本体着色（cirrus_sky），置于纯白背景上 -->
     <path
-        android:fillColor="#FF87CEEB"
+        android:fillColor="#FF2196F3"
         android:pathData="M14,62 C34,54 58,52 76,54 C84,55 90,52 95,45 C91,53 84,58 74,59 C56,60 34,62 14,68 Z" />
 
     <path
-        android:fillColor="#FF87CEEB"
+        android:fillColor="#FF2196F3"
         android:pathData="M24,74 C40,68 58,67 72,69 C78,70 83,68 87,63 C84,70 77,74 68,74 C52,75 38,77 24,81 Z" />
 
     <path
-        android:fillColor="#B387CEEB"
+        android:fillColor="#B32196F3"
         android:pathData="M52,40 C64,35 76,34 84,36 C89,37 93,35 96,31 C93,38 87,41 80,41 C70,41 60,43 52,46 Z" />
 </vector>
