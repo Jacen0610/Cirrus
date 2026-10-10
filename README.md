@@ -6,6 +6,27 @@
 [![Android CI](https://github.com/OWNER/REPO/actions/workflows/android-ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/android-ci.yml)
 -->
 
+## 应用展示
+
+> 📷 截图位预留：拍几天云、攒些真实观察后，把截图放入 `docs/screenshots/`，取消下方注释即可。
+> 截图方法：手机 `电源 + 音量下`，或 `adb exec-out screencap -p > docs/screenshots/xx.png`。
+
+<!-- 六个核心界面各一张（png 竖屏即可），放好后删除本段注释标记：
+
+| 主页 | 拍摄 |
+|---|---|
+| ![主页](docs/screenshots/home.png) | ![拍摄](docs/screenshots/camera.png) |
+
+| 识别结果（top-3 + 修正） | 观察日记（搜索 + 统计） |
+|---|---|
+| ![识别结果](docs/screenshots/result.png) | ![日记](docs/screenshots/diary.png) |
+
+| 观察详情 | 模型信息 / 推理基准 |
+|---|---|
+| ![详情](docs/screenshots/detail.png) | ![模型](docs/screenshots/model.png) |
+
+-->
+
 ## 功能
 
 - 📷 拍摄天空照片（CameraX）
