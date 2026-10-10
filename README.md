@@ -76,6 +76,17 @@ Android SDK / 端侧推理
 **发现**：该规模模型（3.5M 参数 / 224 输入）算子细小，多线程的调度开销恰好抵消并行收益——
 生产配置因此固定单线程（同延迟、更省电）。模型算力 371 MFLOPs，float32 体积 10.09 MB。
 
+## 自定义品牌图
+
+启动页（Splash）与主页中心 Logo 共用同一张图片资源：`app/src/main/res/drawable/brand_logo.xml`
+（默认为矢量白云）。换成自己的图只需三步：
+
+1. 准备图片：建议 **512×512、透明背景的 PNG/WebP**；用于启动页时内容居中、四周留约 1/6 边距（系统会裁入圆形，太贴边会被裁掉）；
+2. 把文件放到 `app/src/main/res/drawable-nodpi/brand_logo.png`（`nodpi` 目录避免按屏幕密度被二次缩放）；
+3. **删除**默认的 `app/src/main/res/drawable/brand_logo.xml`（同名资源只允许存在一个，否则构建报 duplicate resource），重新构建安装——启动页与主页同时生效。
+
+启动页背景色改 `res/values/colors.xml` 里的 `cirrus_sky`；主页 Logo 底色同步使用该颜色。
+
 ## 构建
 
 ```bash
