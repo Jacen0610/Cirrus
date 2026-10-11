@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -118,7 +119,12 @@ private fun ReadyContent(
         if (state.results.isEmpty()) {
             Text(stringResource(R.string.result_no_candidates))
         } else {
-            Text(stringResource(R.string.result_hint))
+            Text(stringResource(R.string.result_hint), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                text = stringResource(R.string.result_improving_note),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             state.results.forEachIndexed { index, result ->
                 CandidateRow(
                     label = stringResource(result.genus.labelRes()),

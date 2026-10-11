@@ -80,6 +80,10 @@ Android SDK / 端侧推理
 因此产品设计为 **top-3 候选 + 用户一键修正**：模型收窄范围，人做终裁，
 修正记录可导出为带标签照片集（数据飞轮），直接反哺下一轮微调。
 
+**已知局限（v1.0，已在应用内披露）**：训练集无负样本类，softmax 对非天空照片
+（室内/地面等）仍会输出云属候选——现以天空颜色粗筛缓解，覆盖有限，根治需
+`non_cloud` 负样本类重训；相近云属混淆由 top-3 + 人工修正兜底。
+
 ## 端侧实测（Pixel 7, Tensor G2）
 
 同一 float32 模型，Benchmark 页实测（预热 3 次、计时 20 次取统计）：
@@ -125,7 +129,7 @@ keytool -genkeypair -v -keystore cirrus.jks -keyalg RSA -keysize 2048 -validity 
 - [x] Phase 1：拍摄 → 识别 → 保存 → 日记闭环（搜索/统计/修正导出）
 - [x] Phase 2：CCSN 数据集微调 MobileNetV4，float32 部署（`training/`）
 - [x] Phase 3：推理 Benchmark 页（CPU 线程对比实测；int8/GPU 经评估延后，见上）
-- [ ] Phase 4+：修正数据飞轮反哺微调、更多数据集（TJNU 申请中）、天气提示
+- [ ] Phase 4+：non_cloud 负样本类重训（根治非天空误判）、修正数据飞轮反哺微调、更多数据集（TJNU 申请中）、天气提示
 
 ## License
 

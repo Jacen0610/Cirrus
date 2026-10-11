@@ -18,6 +18,7 @@
     <!-- Result -->
     <string name="title_result">识别结果</string>
     <string name="result_hint">模型给出前三个候选，点选你认为正确的云属</string>
+    <string name="result_improving_note">模型仍在改进中：非天空照片可能仍被误判，你的点选修正将用于后续训练</string>
     <string name="result_no_candidates">这张照片无法识别，请重新拍摄</string>
     <string name="confidence_percent">%1$d%%</string>
 
@@ -68,6 +69,9 @@
     <string name="model_latency_cpu4">CPU · 4 线程：平均 16.6 ms</string>
     <string name="model_latency_gpu">GPU 委托：经评估不启用（详见工程决策）</string>
     <string name="model_section_decisions">工程决策</string>
+    <string name="model_section_limitations">已知局限（v1.0）</string>
+    <string name="model_limitation_ood">非天空照片（室内/地面等）可能仍被给出云属候选——当前仅靠天空颜色粗筛缓解，根治需补充负样本类重新训练（见路线图）</string>
+    <string name="model_limitation_confusable">相近云属（如层云/高层云、卷云/卷层云）易混淆，由 top-3 候选 + 人工修正兜底</string>
     <string name="model_decision_int8">int8 量化：管线已实现，CPU 延迟已无感，暂缓启用</string>
     <string name="model_decision_gpu">GPU 委托：16ms 无感，收益不可感知，不引入</string>
     <string name="model_decision_threads">单线程推理：实测多线程无收益，更省电</string>

@@ -59,6 +59,13 @@ fun ModelInfoScreen(onOpenBenchmark: () -> Unit) {
             }
         }
 
+        InfoCard(titleRes = R.string.model_section_limitations) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(R.string.model_limitation_ood), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.model_limitation_confusable), style = MaterialTheme.typography.bodySmall)
+            }
+        }
+
         Button(
             onClick = onOpenBenchmark,
             modifier = Modifier
