@@ -37,8 +37,9 @@ class ClassifierBenchmark @Inject constructor(
             eraseColor(0xFF87CEEB.toInt())
         }
         val input = TensorPreprocess.bitmapToInput(bitmap)
-        val output = Array(1) { FloatArray(TensorPreprocess.NUM_CLASSES) }
-        val modelBytes = context.assets.open(MODEL_FILE).use { it.readBytes() }
+        val labels = TensorPreprocess.readLabels(context)
+        val output = Array(1) { FloatArray(labels.size) }
+        val modelBytes = context.assets.open(TensorPreprocess.MODEL_FILE).use { it.readBytes() }
 
         val results = mutableListOf<ConfigurationResult>()
 
@@ -128,7 +129,6 @@ class ClassifierBenchmark @Inject constructor(
     }
 
     companion object {
-        private const val MODEL_FILE = "cloud_classifier.tflite"
         private const val WARMUP_ROUNDS = 3
     }
 }

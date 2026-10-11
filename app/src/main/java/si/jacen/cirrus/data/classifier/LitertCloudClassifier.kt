@@ -32,7 +32,7 @@ class LitertCloudClassifier @Inject constructor(
     private val labels: List<String>
 
     init {
-        val modelBytes = context.assets.open(MODEL_FILE).use { it.readBytes() }
+        val modelBytes = context.assets.open(TensorPreprocess.MODEL_FILE).use { it.readBytes() }
         val modelBuffer = ByteBuffer.allocateDirect(modelBytes.size)
             .order(ByteOrder.nativeOrder())
             .put(modelBytes)
@@ -42,11 +42,9 @@ class LitertCloudClassifier @Inject constructor(
             Interpreter.Options().apply { setNumThreads(NUM_THREADS) },
         )
 
-        labels = context.assets.open(LABELS_FILE).bufferedReader().readLines()
-            .filter { it.isNotBlank() }
-        require(labels.size == TensorPreprocess.NUM_CLASSES) {
-            "labels.txt 有 ${labels.size} 类，与模型输出 ${TensorPreprocess.NUM_CLASSES} 维不符"
-        }
+        // 输出维度以 labels.txt 为准，兼容后续类别数变化（如负样本类）
+        labels = TensorPreprocess.readLabels(context)
+        require(labels.size >= 2) { "labels.txt 类别数异常: ${labels.size}" }
     }
 
     override suspend fun classify(bitmap: Bitmap): List<ClassificationResult> =
@@ -55,7 +53,7 @@ class LitertCloudClassifier @Inject constructor(
             if (!SkyHeuristic.looksLikeSky(bitmap)) return@withContext emptyList()
 
             val input = TensorPreprocess.bitmapToInput(bitmap)
-            val output = Array(1) { FloatArray(TensorPreprocess.NUM_CLASSES) }
+            val output = Array(1) { FloatArray(labels.size) }
             interpreter.run(input, output)
             postprocess(output[0])
         }
@@ -91,9 +89,6 @@ class LitertCloudClassifier @Inject constructor(
     }
 
     companion object {
-        private const val MODEL_FILE = "cloud_classifier.tflite"
-        private const val LABELS_FILE = "labels.txt"
-
         // 实测（Pixel 7, Benchmark 页）：1 线程与 4 线程延迟相同（~16.6ms），
         // 算子过小导致多线程无收益——用单线程以降低功耗与发热
         private const val NUM_THREADS = 1

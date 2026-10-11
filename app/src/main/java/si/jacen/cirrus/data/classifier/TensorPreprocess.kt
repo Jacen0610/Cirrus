@@ -1,15 +1,21 @@
 package si.jacen.cirrus.data.classifier
 
+import android.content.Context
 import android.graphics.Bitmap
 
 /**
- * bitmap → 模型输入张量的共享预处理。
- * 参数是训练管线的契约（见 LitertCloudClassifier 的说明），两端必须一致。
+ * bitmap → 模型输入张量的共享预处理，以及模型资产的统一读取入口。
+ * 输出维度以 labels.txt 实际行数为准——换模型（如增减类别）无需改代码。
  */
 internal object TensorPreprocess {
 
+    const val MODEL_FILE = "cloud_classifier.tflite"
+    const val LABELS_FILE = "labels.txt"
     const val INPUT_SIZE = 224
-    const val NUM_CLASSES = 12
+
+    fun readLabels(context: Context): List<String> =
+        context.assets.open(LABELS_FILE).bufferedReader().readLines()
+            .filter { it.isNotBlank() }
 
     private val MEAN = floatArrayOf(0.485f, 0.456f, 0.406f)
     private val STD = floatArrayOf(0.229f, 0.224f, 0.225f)
