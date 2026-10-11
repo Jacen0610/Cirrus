@@ -51,6 +51,9 @@ class LitertCloudClassifier @Inject constructor(
 
     override suspend fun classify(bitmap: Bitmap): List<ClassificationResult> =
         withContext(Dispatchers.Default) {
+            // 粗筛：非天空照片直接拒识，不进模型
+            if (!SkyHeuristic.looksLikeSky(bitmap)) return@withContext emptyList()
+
             val input = TensorPreprocess.bitmapToInput(bitmap)
             val output = Array(1) { FloatArray(TensorPreprocess.NUM_CLASSES) }
             interpreter.run(input, output)
