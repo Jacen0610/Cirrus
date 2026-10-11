@@ -91,6 +91,7 @@
     <string name="genus_cumulonimbus">积雨云</string>
     <string name="genus_cumulus">积云</string>
     <string name="genus_nimbostratus">雨层云</string>
+    <string name="genus_non_cloud">非云照片</string>
     <string name="genus_stratus">层云</string>
     <string name="genus_stratocumulus">层积云</string>
 </resources>

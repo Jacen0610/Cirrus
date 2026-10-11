@@ -20,7 +20,9 @@ class DummyCloudClassifier @Inject constructor() : CloudClassifier {
     override suspend fun classify(bitmap: Bitmap): List<ClassificationResult> {
         delay(Random.nextLong(120, 300))
 
-        val candidates = CloudGenus.entries.shuffled()
+        val candidates = CloudGenus.entries
+            .filter { it != CloudGenus.NON_CLOUD }
+            .shuffled()
         val topConfidence = Random.nextFloat() * 0.35f + 0.60f
         val secondConfidence = Random.nextFloat() * (topConfidence - 0.25f) + 0.15f
         val thirdConfidence = Random.nextFloat() * secondConfidence

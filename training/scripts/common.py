@@ -14,7 +14,7 @@ from torch.utils.data import Dataset
 
 SEED = 42
 
-# 与安卓端 CloudGenus.wireName 对齐的十一个云属（CCSN 数据集，有序即索引约定）
+# 与安卓端 CloudGenus.wireName 对齐：11 个 WMO 云属 + non_cloud 拒识负样本类
 EXPECTED_LABELS = [
     "altocumulus",
     "altostratus",
@@ -25,8 +25,9 @@ EXPECTED_LABELS = [
     "cumulonimbus",
     "cumulus",
     "nimbostratus",
-    "stratocumulus",
+    "non_cloud",
     "stratus",
+    "stratocumulus",
 ]
 
 # CCSN 数据集常见的缩写目录名 -> 全名

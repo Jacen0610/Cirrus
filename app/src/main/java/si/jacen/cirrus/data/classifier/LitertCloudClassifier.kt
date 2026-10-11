@@ -68,9 +68,17 @@ class LitertCloudClassifier @Inject constructor(
 
         if (probabilities.max() < MIN_CONFIDENCE) return emptyList()
 
-        return labels.indices
+        val ranked = labels.indices
             .map { index -> index to probabilities[index] }
             .sortedByDescending { it.second }
+
+        // 负样本类命中且位居首位 → 判定"未识别到云"，直接拒识
+        if (ranked.first().let { (index, _) ->
+                labels[index] == CloudGenus.NON_CLOUD.wireName
+            }
+        ) return emptyList()
+
+        return ranked
             .take(TOP_K)
             .mapNotNull { (index, probability) ->
                 CloudGenus.entries

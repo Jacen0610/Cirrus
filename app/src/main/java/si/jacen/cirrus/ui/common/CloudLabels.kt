@@ -20,6 +20,7 @@ fun CloudGenus.labelRes(): Int = when (this) {
     CloudGenus.CUMULONIMBUS -> R.string.genus_cumulonimbus
     CloudGenus.CUMULUS -> R.string.genus_cumulus
     CloudGenus.NIMBOSTRATUS -> R.string.genus_nimbostratus
+    CloudGenus.NON_CLOUD -> R.string.genus_non_cloud
     CloudGenus.STRATUS -> R.string.genus_stratus
     CloudGenus.STRATOCUMULUS -> R.string.genus_stratocumulus
 }

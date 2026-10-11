@@ -9,7 +9,7 @@ import android.graphics.Bitmap
 internal object TensorPreprocess {
 
     const val INPUT_SIZE = 224
-    const val NUM_CLASSES = 11
+    const val NUM_CLASSES = 12
 
     private val MEAN = floatArrayOf(0.485f, 0.456f, 0.406f)
     private val STD = floatArrayOf(0.229f, 0.224f, 0.225f)
