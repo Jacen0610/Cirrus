@@ -57,12 +57,16 @@ class LitertCloudClassifier @Inject constructor(
             postprocess(output[0])
         }
 
-    /** logits → softmax → 取 top-3 并按 labels 映射回 CloudGenus。 */
+    /** logits → softmax → 取 top-3 并按 labels 映射回 CloudGenus。
+     *  最高置信度低于阈值时返回空（拒识）：softmax 必然输出某个类别，
+     *  无云/非天空照片需要靠阈值挡在门外。阈值待真实数据校准。 */
     private fun postprocess(logits: FloatArray): List<ClassificationResult> {
         val maxLogit = logits.max()
         val exps = logits.map { exp(it - maxLogit) }
         val sum = exps.sum()
         val probabilities = exps.map { it / sum }
+
+        if (probabilities.max() < MIN_CONFIDENCE) return emptyList()
 
         return labels.indices
             .map { index -> index to probabilities[index] }
@@ -83,5 +87,9 @@ class LitertCloudClassifier @Inject constructor(
         // 算子过小导致多线程无收益——用单线程以降低功耗与发热
         private const val NUM_THREADS = 1
         private const val TOP_K = 3
+
+        // 拒识阈值：低于此置信度视为"未识别到云"。
+        // 当前为启发值；更优做法是给训练集补充负样本类（见 README 路线图）
+        private const val MIN_CONFIDENCE = 0.45f
     }
 }
